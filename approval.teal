@@ -1,0 +1,1017 @@
+#pragma version 8
+txn NumAppArgs
+int 0
+==
+bnz main_l22
+txna ApplicationArgs 0
+method "create(uint64,uint64,uint64,uint64,uint8,uint64,uint64,uint64,byte[],byte[])void"
+==
+bnz main_l21
+txna ApplicationArgs 0
+method "commit(byte[],byte[],byte[])void"
+==
+bnz main_l20
+txna ApplicationArgs 0
+method "reveal_for(byte[],uint64,byte[],byte[],byte[])void"
+==
+bnz main_l19
+txna ApplicationArgs 0
+method "settle()void"
+==
+bnz main_l18
+txna ApplicationArgs 0
+method "finalize_win(uint64)void"
+==
+bnz main_l17
+txna ApplicationArgs 0
+method "promote_next()void"
+==
+bnz main_l16
+txna ApplicationArgs 0
+method "claim_refund()void"
+==
+bnz main_l15
+txna ApplicationArgs 0
+method "set_kyc(address,uint8)void"
+==
+bnz main_l14
+txna ApplicationArgs 0
+method "update()void"
+==
+bnz main_l13
+txna ApplicationArgs 0
+method "delete()void"
+==
+bnz main_l12
+err
+main_l12:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub deletecaster_19
+int 1
+return
+main_l13:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub updatecaster_18
+int 1
+return
+main_l14:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub setkyccaster_17
+int 1
+return
+main_l15:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub claimrefundcaster_16
+int 1
+return
+main_l16:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub promotenextcaster_15
+int 1
+return
+main_l17:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub finalizewincaster_14
+int 1
+return
+main_l18:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub settlecaster_13
+int 1
+return
+main_l19:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub revealforcaster_12
+int 1
+return
+main_l20:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub commitcaster_11
+int 1
+return
+main_l21:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub createcaster_10
+int 1
+return
+main_l22:
+txn OnCompletion
+int NoOp
+==
+bnz main_l32
+txn OnCompletion
+int OptIn
+==
+bnz main_l31
+txn OnCompletion
+int CloseOut
+==
+bnz main_l30
+txn OnCompletion
+int UpdateApplication
+==
+bnz main_l29
+txn OnCompletion
+int DeleteApplication
+==
+bnz main_l28
+err
+main_l28:
+txn ApplicationID
+int 0
+!=
+assert
+int 1
+return
+main_l29:
+txn ApplicationID
+int 0
+!=
+assert
+int 1
+return
+main_l30:
+txn ApplicationID
+int 0
+!=
+assert
+int 1
+return
+main_l31:
+txn ApplicationID
+int 0
+!=
+assert
+int 1
+return
+main_l32:
+txn ApplicationID
+int 0
+==
+assert
+int 1
+return
+
+// create
+create_0:
+proto 10 0
+byte "SELLER"
+txn Sender
+app_global_put
+byte "ASA_QUOTE"
+frame_dig -10
+app_global_put
+byte "RESERVE"
+frame_dig -9
+app_global_put
+byte "MIN_BID"
+frame_dig -8
+app_global_put
+byte "BOND"
+frame_dig -7
+app_global_put
+byte "SECOND_PRICE"
+frame_dig -6
+app_global_put
+byte "COMMIT_END"
+frame_dig -5
+app_global_put
+byte "UNLOCK_SLACK"
+frame_dig -4
+app_global_put
+byte "PAY_WINDOW"
+frame_dig -3
+app_global_put
+byte "ORACLE_PK"
+frame_dig -2
+extract 2 0
+app_global_put
+byte "P_HASH"
+frame_dig -1
+extract 2 0
+app_global_put
+byte "WINNER"
+byte ""
+app_global_put
+byte "WIN_BID"
+int 0
+app_global_put
+byte "SECOND_BID"
+int 0
+app_global_put
+byte "SECOND_WINNER"
+byte ""
+app_global_put
+byte "SETTLED"
+int 0
+app_global_put
+byte "SETTLE_ROUND"
+int 0
+app_global_put
+frame_dig -5
+global Round
+>
+assert
+int 1
+return
+
+// commit
+commit_1:
+proto 3 0
+global Round
+byte "COMMIT_END"
+app_global_get
+<
+assert
+global GroupSize
+int 2
+==
+assert
+gtxn 0 TypeEnum
+int pay
+==
+assert
+gtxn 0 Receiver
+global CurrentApplicationAddress
+==
+assert
+gtxn 0 Amount
+byte "BOND"
+app_global_get
+==
+assert
+txn Sender
+byte "BONDED"
+app_local_get
+int 0
+==
+assert
+txn Sender
+byte "COMMIT"
+frame_dig -3
+extract 2 0
+app_local_put
+txn Sender
+byte "C_CID"
+frame_dig -2
+extract 2 0
+app_local_put
+txn Sender
+byte "ANON_KEY"
+frame_dig -1
+extract 2 0
+app_local_put
+txn Sender
+byte "BONDED"
+int 1
+app_local_put
+txn Sender
+byte "REVEALED"
+int 0
+app_local_put
+txn Sender
+byte "REFUNDED"
+int 0
+app_local_put
+txn Sender
+byte "BID"
+int 0
+app_local_put
+txn Sender
+byte "REMAINING_BOND"
+byte "BOND"
+app_global_get
+app_local_put
+frame_dig -3
+extract 2 0
+txn Sender
+box_put
+int 1
+return
+
+// reveal_for
+revealfor_2:
+proto 5 0
+int 0
+byte "COMMIT_END"
+app_global_get
+global Round
+<=
+assert
+global Round
+byte "COMMIT_END"
+app_global_get
+byte "UNLOCK_SLACK"
+app_global_get
++
+<
+assert
+frame_dig -1
+int 0
+extract_uint16
+frame_bury 0
+frame_dig 0
+int 64
+==
+assert
+byte "v:1"
+global CurrentApplicationID
+itob
+concat
+frame_dig -2
+extract 2 0
+concat
+global Round
+itob
+concat
+byte "P_HASH"
+app_global_get
+concat
+byte "COMMIT_END"
+app_global_get
+itob
+concat
+byte "COMMIT_END"
+app_global_get
+byte "UNLOCK_SLACK"
+app_global_get
++
+itob
+concat
+store 1
+load 1
+frame_dig -1
+extract 2 0
+byte "ORACLE_PK"
+app_global_get
+ed25519verify_bare
+assert
+frame_dig -5
+extract 2 0
+box_get
+store 6
+store 5
+load 6
+assert
+load 5
+store 0
+frame_dig -4
+itob
+frame_dig -3
+extract 2 0
+concat
+load 0
+byte "ANON_KEY"
+app_local_get
+concat
+global CurrentApplicationID
+itob
+concat
+sha256
+load 0
+byte "COMMIT"
+app_local_get
+==
+assert
+load 0
+byte "REVEALED"
+app_local_get
+int 0
+==
+assert
+frame_dig -4
+byte "MIN_BID"
+app_global_get
+>=
+assert
+load 0
+byte "REVEALED"
+int 1
+app_local_put
+load 0
+byte "BID"
+frame_dig -4
+app_local_put
+frame_dig -4
+byte "WIN_BID"
+app_global_get
+>
+bnz revealfor_2_l6
+frame_dig -4
+byte "SECOND_BID"
+app_global_get
+>
+bnz revealfor_2_l5
+revealfor_2_l2:
+load 0
+byte "REMAINING_BOND"
+app_local_get
+store 2
+txn Sender
+load 0
+==
+bnz revealfor_2_l4
+load 2
+int 70
+*
+int 100
+/
+store 3
+load 2
+int 30
+*
+int 100
+/
+store 4
+itxn_begin
+int pay
+itxn_field TypeEnum
+txn Sender
+itxn_field Receiver
+load 3
+itxn_field Amount
+itxn_submit
+load 0
+byte "REMAINING_BOND"
+load 4
+app_local_put
+b revealfor_2_l7
+revealfor_2_l4:
+load 0
+byte "REMAINING_BOND"
+load 2
+app_local_put
+b revealfor_2_l7
+revealfor_2_l5:
+byte "SECOND_BID"
+frame_dig -4
+app_global_put
+byte "SECOND_WINNER"
+load 0
+app_global_put
+b revealfor_2_l2
+revealfor_2_l6:
+byte "SECOND_BID"
+byte "WIN_BID"
+app_global_get
+app_global_put
+byte "SECOND_WINNER"
+byte "WINNER"
+app_global_get
+app_global_put
+byte "WIN_BID"
+frame_dig -4
+app_global_put
+byte "WINNER"
+load 0
+app_global_put
+b revealfor_2_l2
+revealfor_2_l7:
+int 1
+return
+
+// settle
+settle_3:
+proto 0 0
+global Round
+byte "COMMIT_END"
+app_global_get
+byte "UNLOCK_SLACK"
+app_global_get
++
+>=
+assert
+byte "SETTLED"
+app_global_get
+int 0
+==
+assert
+byte "WINNER"
+app_global_get
+byte ""
+!=
+byte "WIN_BID"
+app_global_get
+byte "RESERVE"
+app_global_get
+>=
+&&
+bnz settle_3_l2
+byte "SETTLED"
+int 1
+app_global_put
+byte "SETTLE_ROUND"
+global Round
+app_global_put
+b settle_3_l3
+settle_3_l2:
+byte "SETTLED"
+int 1
+app_global_put
+byte "SETTLE_ROUND"
+global Round
+app_global_put
+settle_3_l3:
+int 1
+return
+
+// finalize_win
+finalizewin_4:
+proto 1 0
+byte "SETTLED"
+app_global_get
+int 1
+==
+assert
+txn Sender
+byte "WINNER"
+app_global_get
+==
+assert
+global Round
+byte "SETTLE_ROUND"
+app_global_get
+byte "PAY_WINDOW"
+app_global_get
++
+<=
+assert
+global GroupSize
+int 2
+==
+assert
+gtxn 0 TypeEnum
+int axfer
+==
+assert
+gtxn 0 XferAsset
+byte "ASA_QUOTE"
+app_global_get
+==
+assert
+gtxn 0 AssetReceiver
+global CurrentApplicationAddress
+==
+assert
+gtxn 0 AssetAmount
+frame_dig -1
+==
+assert
+byte "SECOND_PRICE"
+app_global_get
+int 1
+==
+bnz finalizewin_4_l7
+byte "WIN_BID"
+app_global_get
+byte "RESERVE"
+app_global_get
+>
+bnz finalizewin_4_l6
+byte "RESERVE"
+app_global_get
+finalizewin_4_l3:
+store 7
+finalizewin_4_l4:
+frame_dig -1
+load 7
+==
+assert
+itxn_begin
+int axfer
+itxn_field TypeEnum
+byte "ASA_QUOTE"
+app_global_get
+itxn_field XferAsset
+byte "SELLER"
+app_global_get
+itxn_field AssetReceiver
+frame_dig -1
+itxn_field AssetAmount
+itxn_submit
+txn Sender
+byte "REMAINING_BOND"
+app_local_get
+int 0
+>
+bz finalizewin_4_l11
+itxn_begin
+int pay
+itxn_field TypeEnum
+txn Sender
+itxn_field Receiver
+txn Sender
+byte "REMAINING_BOND"
+app_local_get
+itxn_field Amount
+itxn_submit
+txn Sender
+byte "REMAINING_BOND"
+int 0
+app_local_put
+b finalizewin_4_l11
+finalizewin_4_l6:
+byte "WIN_BID"
+app_global_get
+b finalizewin_4_l3
+finalizewin_4_l7:
+byte "SECOND_BID"
+app_global_get
+byte "RESERVE"
+app_global_get
+>
+bnz finalizewin_4_l10
+byte "RESERVE"
+app_global_get
+finalizewin_4_l9:
+store 7
+b finalizewin_4_l4
+finalizewin_4_l10:
+byte "SECOND_BID"
+app_global_get
+b finalizewin_4_l9
+finalizewin_4_l11:
+int 1
+return
+
+// promote_next
+promotenext_5:
+proto 0 0
+byte "SETTLED"
+app_global_get
+int 1
+==
+assert
+global Round
+byte "SETTLE_ROUND"
+app_global_get
+byte "PAY_WINDOW"
+app_global_get
++
+>
+assert
+byte "SECOND_WINNER"
+app_global_get
+byte ""
+!=
+assert
+byte "WINNER"
+app_global_get
+byte "REMAINING_BOND"
+app_local_get
+int 0
+>
+bz promotenext_5_l2
+itxn_begin
+int pay
+itxn_field TypeEnum
+byte "SELLER"
+app_global_get
+itxn_field Receiver
+byte "WINNER"
+app_global_get
+byte "REMAINING_BOND"
+app_local_get
+itxn_field Amount
+itxn_submit
+byte "WINNER"
+app_global_get
+byte "REMAINING_BOND"
+int 0
+app_local_put
+promotenext_5_l2:
+byte "WINNER"
+byte "SECOND_WINNER"
+app_global_get
+app_global_put
+byte "WIN_BID"
+byte "SECOND_BID"
+app_global_get
+app_global_put
+byte "SECOND_WINNER"
+byte ""
+app_global_put
+byte "SECOND_BID"
+int 0
+app_global_put
+byte "SETTLE_ROUND"
+global Round
+app_global_put
+int 1
+return
+
+// claim_refund
+claimrefund_6:
+proto 0 0
+byte "SETTLED"
+app_global_get
+int 1
+==
+assert
+txn Sender
+byte "REVEALED"
+app_local_get
+int 1
+==
+assert
+txn Sender
+byte "WINNER"
+app_global_get
+!=
+assert
+txn Sender
+byte "REFUNDED"
+app_local_get
+int 0
+==
+assert
+txn Sender
+byte "REMAINING_BOND"
+app_local_get
+int 0
+>
+bz claimrefund_6_l2
+itxn_begin
+int pay
+itxn_field TypeEnum
+txn Sender
+itxn_field Receiver
+txn Sender
+byte "REMAINING_BOND"
+app_local_get
+itxn_field Amount
+itxn_submit
+txn Sender
+byte "REMAINING_BOND"
+int 0
+app_local_put
+claimrefund_6_l2:
+txn Sender
+byte "REFUNDED"
+int 1
+app_local_put
+int 1
+return
+
+// set_kyc
+setkyc_7:
+proto 2 0
+txn Sender
+byte "SELLER"
+app_global_get
+==
+assert
+global Round
+byte "COMMIT_END"
+app_global_get
+<
+assert
+byte "KYC:"
+frame_dig -2
+concat
+frame_dig -1
+itob
+box_put
+int 1
+return
+
+// update
+update_8:
+proto 0 0
+txn Sender
+byte "SELLER"
+app_global_get
+==
+assert
+int 1
+return
+
+// delete
+delete_9:
+proto 0 0
+txn Sender
+byte "SELLER"
+app_global_get
+==
+assert
+int 1
+return
+
+// create_caster
+createcaster_10:
+proto 0 0
+int 0
+dupn 7
+byte ""
+dup
+txna ApplicationArgs 1
+btoi
+frame_bury 0
+txna ApplicationArgs 2
+btoi
+frame_bury 1
+txna ApplicationArgs 3
+btoi
+frame_bury 2
+txna ApplicationArgs 4
+btoi
+frame_bury 3
+txna ApplicationArgs 5
+int 0
+getbyte
+frame_bury 4
+txna ApplicationArgs 6
+btoi
+frame_bury 5
+txna ApplicationArgs 7
+btoi
+frame_bury 6
+txna ApplicationArgs 8
+btoi
+frame_bury 7
+txna ApplicationArgs 9
+frame_bury 8
+txna ApplicationArgs 10
+frame_bury 9
+frame_dig 0
+frame_dig 1
+frame_dig 2
+frame_dig 3
+frame_dig 4
+frame_dig 5
+frame_dig 6
+frame_dig 7
+frame_dig 8
+frame_dig 9
+callsub create_0
+retsub
+
+// commit_caster
+commitcaster_11:
+proto 0 0
+byte ""
+dupn 2
+txna ApplicationArgs 1
+frame_bury 0
+txna ApplicationArgs 2
+frame_bury 1
+txna ApplicationArgs 3
+frame_bury 2
+frame_dig 0
+frame_dig 1
+frame_dig 2
+callsub commit_1
+retsub
+
+// reveal_for_caster
+revealforcaster_12:
+proto 0 0
+byte ""
+int 0
+byte ""
+dupn 2
+txna ApplicationArgs 1
+frame_bury 0
+txna ApplicationArgs 2
+btoi
+frame_bury 1
+txna ApplicationArgs 3
+frame_bury 2
+txna ApplicationArgs 4
+frame_bury 3
+txna ApplicationArgs 5
+frame_bury 4
+frame_dig 0
+frame_dig 1
+frame_dig 2
+frame_dig 3
+frame_dig 4
+callsub revealfor_2
+retsub
+
+// settle_caster
+settlecaster_13:
+proto 0 0
+callsub settle_3
+retsub
+
+// finalize_win_caster
+finalizewincaster_14:
+proto 0 0
+int 0
+txna ApplicationArgs 1
+btoi
+frame_bury 0
+frame_dig 0
+callsub finalizewin_4
+retsub
+
+// promote_next_caster
+promotenextcaster_15:
+proto 0 0
+callsub promotenext_5
+retsub
+
+// claim_refund_caster
+claimrefundcaster_16:
+proto 0 0
+callsub claimrefund_6
+retsub
+
+// set_kyc_caster
+setkyccaster_17:
+proto 0 0
+byte ""
+int 0
+txna ApplicationArgs 1
+frame_bury 0
+txna ApplicationArgs 2
+int 0
+getbyte
+frame_bury 1
+frame_dig 0
+frame_dig 1
+callsub setkyc_7
+retsub
+
+// update_caster
+updatecaster_18:
+proto 0 0
+callsub update_8
+retsub
+
+// delete_caster
+deletecaster_19:
+proto 0 0
+callsub delete_9
+retsub
